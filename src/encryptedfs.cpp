@@ -5,6 +5,8 @@
 
 #include "encryptedfs.h"
 #include "fsutils.h"
+#include "logger.h" 
+
 extern "C"
 {
 
@@ -15,7 +17,6 @@ extern "C"
 
 namespace encryptedfs
 {
-    constexpr int MAX_PATH_LENGTH = 100;
 
     static FsInfo* getFsInfo()
     {
@@ -30,6 +31,8 @@ namespace encryptedfs
 
         //Full path should be used - add utils
         const char *fullPath = getAbsPath(path, info->mountPoint);
+        std::string s(fullPath); 
+        Logger::getInstance().Log_trace(s); 
         ret = lstat(fullPath, st);
         return ret;
     }
@@ -58,7 +61,20 @@ namespace encryptedfs
         struct dirent *dentry;
         DIR *dirp;
 
+        dirp = (DIR *)(uintptr_t) fi->fh;
+
         dentry = readdir(dirp);
+
+        if(0 == dentry) return 0; 
+
+        do
+        {
+            if(filler(buf, dentry->d_name, NULL, 0) != 0)
+            {
+                return -ENOMEM; 
+            }
+        }
+        while((dentry = readdir(dirp)) != NULL);
         return 0;
 
     }
@@ -78,12 +94,12 @@ namespace encryptedfs
 
     int efs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
     {
-        return 0;
+        return pread(fi->fh, buf, size, offset);
     }
 
     int efs_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
     {
-        return 0;
+        return pwrite(fi->fh, buf, size, offset);
     }
 
     int efs_release(const char *path, struct fuse_file_info *fi)

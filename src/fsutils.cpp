@@ -2,7 +2,7 @@
 
 #include "fsutils.h"
 #include <iostream>
-
+#include "logger.h"
 
 void FsInfo::init(int argc, char **argv)
 {
@@ -24,6 +24,7 @@ const char* getAbsPath(const char *path, const std::string &mountPoint)
     std::string absPath(mountPoint);
     absPath.append(tmp);
 
+    Logger::getInstance().Log_trace(absPath);
     return absPath.c_str();
 }
 
