@@ -1,12 +1,14 @@
-
-
 #include "fsutils.h"
-#include <iostream>
 #include "logger.h"
+
+extern "C" 
+{
+    #include <string.h> 
+}
+
 
 void FsInfo::init(int argc, char **argv)
 {
-    std::cout<<argc;
     mountPoint = realpath(argv[argc - 1], NULL);
 
     for(int i = 0; i < argc; ++i)
@@ -23,9 +25,11 @@ const char* getAbsPath(const char *path, const std::string &mountPoint)
     std::string tmp(path);
     std::string absPath(mountPoint);
     absPath.append(tmp);
-
-    Logger::getInstance().Log_trace(absPath);
-    return absPath.c_str();
+    if('/' == absPath.back())
+    {
+        absPath = absPath.substr(0, absPath.size() - 1);
+    }
+    return strdup(absPath.c_str());
 }
 
 

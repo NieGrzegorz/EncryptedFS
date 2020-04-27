@@ -31,8 +31,11 @@ namespace encryptedfs
 
         //Full path should be used - add utils
         const char *fullPath = getAbsPath(path, info->mountPoint);
-        std::string s(fullPath); 
-        Logger::getInstance().Log_trace(s); 
+        
+        std::string log = "getattr path: ";
+        log.append(fullPath);
+        LOG_OP(log);
+
         ret = lstat(fullPath, st);
         return ret;
     }
@@ -125,7 +128,11 @@ namespace encryptedfs
 
     int efs_utime(const char *path, struct utimbuf *ubuf)
     {
-        return 0;
+        
+        FsInfo *info = getFsInfo(); 
+        const char *fullPath = getAbsPath(path, info->mountPoint);
+
+        return utime(fullPath, ubuf);
     }
 
     int efs_mkdir(const char *path, mode_t mode)

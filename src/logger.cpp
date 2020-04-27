@@ -12,20 +12,22 @@ Logger::~Logger()
     m_LogFile.close();
 }
 
-void Logger::Log_trace(std::string &msg)
+void Logger::Log_op(std::string &msg)
 {
-    m_LogFile<<msg;
+    m_LogFile<<"[OP]: "+ msg;
     m_LogFile<<"\n";
 }
 
-void Logger::Log_msg()
+void Logger::Log_msg(std::string &msg)
 {
-
+    m_LogFile<<msg; 
+    m_LogFile<<"\n";
 }
 
-void Logger::Log_error()
+void Logger::Log_error(std::string &msg)
 {
-
+    m_LogFile<<msg; 
+    m_LogFile<<"\n"; 
 }
 
 Logger& Logger::getInstance()
