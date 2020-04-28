@@ -21,3 +21,5 @@ class Logger
 };
 
 #define LOG_OP(x) Logger::getInstance().Log_op(x)
+#define LOG_MSG(x) Logger::getInstance().Log_msg(x)
+#define LOG_ERR(x) Logger::getInstance().Log_error(x)

@@ -40,6 +40,8 @@ namespace encryptedfs {
 
     int efs_utime(const char *path, struct utimbuf *ubuf);
 
+    int efs_utimens(const char *path, const struct timespec ts[2]); 
+
     int efs_mkdir(const char *path, mode_t mode);
 
     int efs_rmdir(const char *path);
@@ -48,4 +50,7 @@ namespace encryptedfs {
 
     int efs_fsync(const char *path, int datasync, struct fuse_file_info *fi);
 
+    int efs_access(const char *path, int mask);
+
+    void *efs_init(struct fuse_conn_info *conn); 
 }

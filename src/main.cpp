@@ -23,13 +23,16 @@ struct fuse_operations fops = {
     .rmdir = encryptedfs::efs_rmdir,
     .rename = encryptedfs::efs_rename,
     .truncate = encryptedfs::efs_truncate,
-    .utime = encryptedfs::efs_utime,
+    //.utime = encryptedfs::efs_utime,
     .open = encryptedfs::efs_open,
     .read = encryptedfs::efs_read,
     .write = encryptedfs::efs_write,
     .release = encryptedfs::efs_release,
     .fsync = encryptedfs::efs_fsync,
-    .readdir = encryptedfs::efs_readdir
+    .readdir = encryptedfs::efs_readdir,
+    .init = encryptedfs::efs_init,
+    .access = encryptedfs::efs_access,
+    .utimens = encryptedfs::efs_utimens
 };
 
 

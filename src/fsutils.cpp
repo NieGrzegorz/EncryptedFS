@@ -3,7 +3,9 @@
 
 extern "C" 
 {
-    #include <string.h> 
+    #include <unistd.h>
+    #include <string.h>
+    #include <fcntl.h>	
 }
 
 
@@ -17,6 +19,13 @@ void FsInfo::init(int argc, char **argv)
         fsArgv.push_back(s);
     }
 
+    chdir(mountPoint.c_str()); 
+    mountPointFd = open(".", 0);
+
+    std::string log = "FsInfo init: mountPoint: " + mountPoint; 
+    LOG_MSG(log); 
+
+
 }
 
 const char* getAbsPath(const char *path, const std::string &mountPoint)
@@ -25,15 +34,13 @@ const char* getAbsPath(const char *path, const std::string &mountPoint)
     std::string tmp(path);
     std::string absPath(mountPoint);
     absPath.append(tmp);
-    if('/' == absPath.back())
-    {
-        absPath = absPath.substr(0, absPath.size() - 1);
-    }
     return strdup(absPath.c_str());
 }
 
 
-const char* getRelPath(const char *path, const char *mountPoint)
+const char* getRelPath(const char *path, const std::string &mountPoint)
 {
-    return "";
+    std::string relPath = ".";
+    relPath.append(path); 
+    return strdup(relPath.c_str());
 }
