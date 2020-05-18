@@ -27,7 +27,7 @@ class BasicFile
         std::fstream m_ioStream;
         std::ifstream m_istream;
         std::ofstream m_ostream; 
-        std::shared_ptr<AesCipher> m_cipher;
 
-        std::string keyFile, ivFile;
+        std::string key, iv;
+        static std::unique_ptr<AesCipher> m_cipher;
 };

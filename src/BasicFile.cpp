@@ -54,7 +54,6 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
             std::vector<byte>::iterator end = begin + m_chunkSize;
 
             std::vector<byte> temp(begin, end);
-
             AesCipher::getInstance().encrypt(temp, ctext);
             writeSingleBlock(ctext);
         }
@@ -74,7 +73,6 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
         std::vector<byte>::iterator begin = v.end() - m_chunkSize;
             
         std::vector<byte> temp(begin, end);
-
         AesCipher::getInstance().encrypt(temp, ctext);
         writeSingleBlock(ctext);
     }

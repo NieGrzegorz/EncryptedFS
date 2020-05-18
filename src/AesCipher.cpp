@@ -9,27 +9,24 @@ AesCipher::AesCipher()
 {
     EVP_add_cipher(EVP_aes_256_cbc());
 
-    m_key = getCipherData(m_keyFile);
-    m_iv = getCipherData(m_ivFile);
+    m_key = getCipherData(AesCipher::m_keyFile);
+    m_iv = getCipherData(AesCipher::m_ivFile);
 }
 
-AesCipher::AesCipher(std::string &keyFile, std::string &ivFile):
-m_keyFile(keyFile),
-m_ivFile(ivFile)
+AesCipher::AesCipher(std::string &keyFile, std::string &ivFile)
 {
+    static std::string kfile = keyFile;
+    static std::string ivfile = ivFile;
     EVP_add_cipher(EVP_aes_256_cbc());
-    m_key = getCipherData(m_keyFile);
-    m_iv = getCipherData(m_ivFile);
+    m_key = getCipherData(kfile);
+    m_iv = getCipherData(ivfile);
 }
 
 AesCipher::~AesCipher()
 {
     FIPS_mode_set(0);
-   // ENGINE_cleanup();
-    //CONF_modules_unload(1);
     EVP_cleanup();
     CRYPTO_cleanup_all_ex_data();
-   // ERR_remove_state();
     ERR_free_strings();
 }
 
@@ -97,6 +94,15 @@ void AesCipher::decrypt(const std::vector<byte> &ctext, std::vector<byte> &rtext
     EVP_CIPHER_CTX_cleanup(ctx.get());
 }
 
+void AesCipher::setCipherData(std::string &keyFile, std::string &ivFile)
+{
+    m_keyFile = keyFile; 
+    m_ivFile = ivFile;
+
+    m_key = getCipherData(m_keyFile);
+    m_iv = getCipherData(m_ivFile);
+}
+
 AesCipher& AesCipher::getInstance()
 {
     static AesCipher instance;
@@ -120,7 +126,6 @@ std::vector<byte> AesCipher::getCipherData(std::string filename)
         istream.sync();
         istream.close();
         return fileData;
-
     }
     else
     {

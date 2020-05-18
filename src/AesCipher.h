@@ -20,6 +20,7 @@ class AesCipher: public CipherBase
         ~AesCipher() override;
         void encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext) override;
         void decrypt(const std::vector<byte> &ctext, std::vector<byte> &rtext) override;
+        void setCipherData(std::string&, std::string&);
         static AesCipher& getInstance();
     
 
@@ -29,7 +30,7 @@ class AesCipher: public CipherBase
 
         static constexpr int m_BlockSize = 16;
         std::string m_keyFile = "/home/greg/scrt/AesKey";
-        std::string m_ivFile = "/home/greg/scrt/AesIV";
+        std::string m_ivFile  = "/home/greg/scrt/AesIV";
 
         std::vector<byte> m_key;
         std::vector<byte> m_iv;
