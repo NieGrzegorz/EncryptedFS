@@ -7,6 +7,10 @@
 #include <string>
 #include <vector>
 
+extern "C"
+{
+    #include <fuse.h>
+}
 
 //Struct containts filesystem information
 //moutPoint - mounting point
@@ -15,8 +19,8 @@
 struct FsInfo
 {
     std::string mountPoint;
-    int fsArgc;
-    std::vector<std::string> fsArgv;
+    std::string keyFile;
+    std::string ivFile;
     int mountPointFd; 
     void init(int argc, char **argv);
 };
@@ -27,4 +31,6 @@ const char* getAbsPath(const char *path, const std::string &mountPoint);
 
 //Transfers absolute path
 //to relative path
-const char* getRelPath(const char *path, const std::string &mountPoing);
+const char* getRelPath(const char *path);
+
+void printUsage();

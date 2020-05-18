@@ -16,22 +16,24 @@ void Logger::Log_op(std::string &msg)
 {
     m_LogFile<<"[OP]: " + msg;
     m_LogFile<<"\n";
+    m_LogFile.flush();
 }
 
 void Logger::Log_msg(std::string &msg)
 {
     m_LogFile<<"[MSG]: " + msg; 
     m_LogFile<<"\n";
+    m_LogFile.flush();
 }
 
 void Logger::Log_error(std::string &msg)
 {
-    m_LogFile<<"[ERR]: " + msg; 
+    m_LogFile<<"[ERR]: " + msg;
     m_LogFile<<"\n"; 
 }
 
 Logger& Logger::getInstance()
 {
-    static Logger instance; 
-    return instance; 
+    static Logger instance;
+    return instance;
 }

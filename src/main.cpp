@@ -7,13 +7,6 @@
 #include <memory>
 #include "fsutils.h"
 #include "encryptedfs.h"
-#include <iostream>
-
-//Print usage of a fs
-void usage()
-{
-    //print fs usage
-}
 
 struct fuse_operations fops = {
     .getattr = encryptedfs::efs_getattr,
@@ -23,7 +16,6 @@ struct fuse_operations fops = {
     .rmdir = encryptedfs::efs_rmdir,
     .rename = encryptedfs::efs_rename,
     .truncate = encryptedfs::efs_truncate,
-    //.utime = encryptedfs::efs_utime,
     .open = encryptedfs::efs_open,
     .read = encryptedfs::efs_read,
     .write = encryptedfs::efs_write,
@@ -35,16 +27,17 @@ struct fuse_operations fops = {
     .utimens = encryptedfs::efs_utimens
 };
 
-
 int main(int argc, char **argv)
 {
     int ret;
     auto fsInfo = std::make_shared<FsInfo>();
     fsInfo->init(argc, argv);
 
-    std::cout<<"hi mark \n";
+    argv[argc - 1] = NULL;
+    argv[argc - 2] = NULL;
+
+    argc -= 2;
+
     ret = fuse_main(argc, argv, &fops, (void *)fsInfo.get());
-
-
     return ret;
 }

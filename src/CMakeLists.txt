@@ -1,7 +1,12 @@
 add_library(utils fsutils.h fsutils.cpp)
+add_library(cipher CipherBase.h AesCipher.h AesCipher.cpp)
+add_library(file BasicFile.h BasicFile.cpp)
 add_library(fsops encryptedfs.h encryptedfs.cpp)
 add_library(logger logger.h logger.cpp)
 
+target_link_libraries(cipher PUBLIC OpenSSL::Crypto)
 target_link_libraries(utils PUBLIC logger)
-target_link_libraries(fsops PUBLIC utils)
+target_link_libraries(file PUBLIC cipher)
+target_link_libraries(file PUBLIC utils)
+target_link_libraries(fsops PUBLIC file)
 target_link_libraries(fsops PUBLIC ${LIB_FUSE})
