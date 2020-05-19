@@ -43,7 +43,7 @@ int BasicFile::read(char *buf, size_t size, off_t offset)
 
 void BasicFile::writeBlocks(std::vector<byte> &v)
 {
-    size_t vectorSize = v.size();
+    int vectorSize = v.size();
     std::vector<byte> ctext;
 
     for(int i = 0; i < vectorSize; i += m_chunkSize)
@@ -82,7 +82,7 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
 
 void BasicFile::readBlocks(std::vector<byte> &rtext, size_t size, int offset)
 {
-    for(int i = 0; i < size; i += m_chunkSize)
+    for(int i = 0; i < static_cast<int>(size); i += m_chunkSize)
     {
         std::vector<byte> temp;
         m_cipher->decrypt(readSingleBlock(m_chunkSize, offset + i), temp);

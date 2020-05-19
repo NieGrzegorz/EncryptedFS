@@ -5,7 +5,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 
 //Struct containts filesystem information
 //moutPoint - mounting point
@@ -28,5 +27,3 @@ const char* getAbsPath(const char *path, const std::string &mountPoint);
 //Transfers path
 //to relative path
 const char* getRelPath(const char *path);
-
-void printUsage();

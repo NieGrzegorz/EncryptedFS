@@ -1,8 +1,10 @@
 
-#include <openssl/err.h>
-#include "AesCipher.h"
 #include <fstream>
 #include <memory>
+#include <openssl/err.h>
+#include <openssl/evp.h>
+
+#include "AesCipher.h"
 
 using EvpCtx = std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)>;
 

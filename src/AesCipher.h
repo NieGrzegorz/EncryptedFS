@@ -1,11 +1,8 @@
 #pragma once
 
 #include <string>
-#include <limits>
 #include <stdexcept>
 #include <vector>
-
-#include <openssl/evp.h>
 
 #include "CipherBase.h"
 
@@ -14,7 +11,7 @@ class AesCipher : public CipherBase
     public:
 
         AesCipher(std::string&, std::string&);
-        ~AesCipher() override;
+        ~AesCipher() noexcept;
 
         void encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext) override;
         void decrypt(const std::vector<byte> &ctext, std::vector<byte> &rtext) override;

@@ -9,27 +9,20 @@ extern "C"
     #include <fcntl.h>
 }
 
-constexpr int minArgc = 4;
 
 void FsInfo::init(int argc, char **argv)
 {
-    if(minArgc > argc)
-    {
-        mountPoint= strdup(realpath(argv[argc - 3], NULL));
-        keyFile= strdup(realpath(argv[argc - 2], NULL));
-        ivFile= strdup(realpath(argv[argc - 1], NULL));
 
-        chdir(mountPoint.c_str()); 
-        mountPointFd = open(".", 0);
+    mountPoint= strdup(realpath(argv[argc - 3], NULL));
+    keyFile= strdup(realpath(argv[argc - 2], NULL));
+    ivFile= strdup(realpath(argv[argc - 1], NULL));
 
-        std::string log = "FsInfo init: mountPoint: " + mountPoint;
-        LOG_MSG(log);
-    }
-    else
-    {
-        printUsage(); 
-        throw std::runtime_error("Not enough arguments");
-    }
+    chdir(mountPoint.c_str()); 
+    mountPointFd = open(".", 0);
+
+    std::string log = "FsInfo init: mountPoint: " + mountPoint;
+    LOG_MSG(log);
+
 }
 
 const char* getAbsPath(const char *path, const std::string &mountPoint)
@@ -47,11 +40,6 @@ const char* getRelPath(const char *path)
     return strdup(relPath.c_str());
 }
 
-void printUsage()
-{
-    std::cout<<"Usage: \n";
-    std::cout<<"./encfs [fuseFlags (optional)] [mounpoint] [AES key file] [AES IV file]\n";
-}
 
 
 

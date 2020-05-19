@@ -13,16 +13,16 @@ class Logger
     public:
         ~Logger();
 
-        static Logger& getInstance(); 
+        static Logger& getInstance();
 
-        void Log_op(std::string &msg); 
-        void Log_msg(std::string &msg); 
-        void Log_error(std::string &msg); 
+        void Log_op(std::string &msg);
+        void Log_msg(std::string &msg);
+        void Log_error(std::string &msg);
 
     private:
-        Logger(); 
+        Logger();
 
-        static const std::string m_logFileName; 
+        static const std::string m_logFileName;
         std::ofstream m_LogFile;
 };
 

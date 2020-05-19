@@ -8,7 +8,7 @@ class BasicFile
 {
     public:
         BasicFile(std::string&, std::string&, std::string&);
-        ~BasicFile();
+        ~BasicFile() noexcept;
         
         void write(const char *buf, size_t size);
         int read(char *buf, size_t size, off_t offset);
