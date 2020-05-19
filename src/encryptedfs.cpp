@@ -20,109 +20,14 @@ extern "C"
 
 namespace encryptedfs
 {
-    constexpr int CHUNK_SIZE = 16;
 
-    
     std::string ivFile = "";
     std::string keyFile = "";
+    constexpr int Err = -1; 
 
     static FsInfo* getFsInfo()
     {
         return (FsInfo *)fuse_get_context()->private_data;
-    }
-
-    std::vector<byte> readWithFstream(const char* path, int size, int offset)
-    {
-
-        std::streampos fileSize;
-        std::ifstream istream; 
-        istream.open(getRelPath(path), std::ifstream::binary| std::ifstream::in);
-
-        if(istream.is_open())
-        {
-            istream.seekg(offset, std::ios::end);
-            fileSize = istream.tellg();
-            istream.seekg(offset, std::ios::beg);
-
-            // read the data:
-            std::vector<byte> fileData(size);
-            if((size+offset) <= int(fileSize))
-            {
-                
-                istream.read((char*) fileData.data(), size);
-                istream.sync();
-            }
-            return fileData;
-
-        }
-        else
-        {
-            throw std::runtime_error("readWithFstream: file is not open");
-        }
-    }
-
-    void readBlocks(const char *path, std::vector<byte> &rtext, size_t size, int offset)
-    {
-        for(int i = 0; i < size; i += CHUNK_SIZE)
-        {
-            std::vector<byte> temp; 
-            AesCipher::getInstance().decrypt(readWithFstream(path, CHUNK_SIZE, offset+i), temp);
-            rtext.insert(rtext.end(), temp.begin(), temp.end()); 
-        }
-    }
-
-    void writeWithFstream(const char* path, std::vector<byte> &v)
-    {
-        std::ofstream ostream; 
-        ostream.open(getRelPath(path), std::ofstream::binary|std::ofstream::out|std::ofstream::app);
-
-        if(ostream.is_open())
-        {
-            ostream.write((char*) v.data(), v.size());
-            ostream.flush();
-        }
-        else
-        {
-            throw std::runtime_error("writeWithFstream: file is not open");
-        }
-    }
-
-    void writeBlocks(const char* path, std::vector<byte> &v)
-    {
-        size_t vectorSize = v.size();
-        std::vector<byte> ctext;
-
-        for(int i = 0; i < vectorSize; i += CHUNK_SIZE)
-        {
-            ctext.clear();
-            if(i+CHUNK_SIZE<= vectorSize)
-            {
-                std::vector<byte>::iterator begin = v.begin() + i;
-                std::vector<byte>::iterator end = begin + CHUNK_SIZE;
-
-                std::vector<byte> temp(begin, end);
-                AesCipher::getInstance().encrypt(temp, ctext);
-                writeWithFstream(path, ctext);
-            }
-        } 
-
-        if(vectorSize % CHUNK_SIZE)
-        {
-            const byte nullByte = 0;
-            int fillerBits = (vectorSize+16) - (vectorSize%CHUNK_SIZE);
-            int bitsNum = fillerBits - vectorSize;
-            for(int i = 0; i < bitsNum; i++ )
-            {
-                v.push_back(nullByte);
-            }
-                std::vector<byte>::iterator end = v.end();
-                std::vector<byte>::iterator begin = v.end() - CHUNK_SIZE;
-                
-
-                std::vector<byte> temp(begin, end);
-                AesCipher::getInstance().encrypt(temp, ctext);
-                writeWithFstream(path, ctext);
-        }
     }
 
     void *efs_init(struct fuse_conn_info *conn)
@@ -149,7 +54,7 @@ namespace encryptedfs
         LOG_OP(log);
 
         retVal = lstat(fullPath, st);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -161,7 +66,7 @@ namespace encryptedfs
         int retVal = 0; 
         const char *fullPath = getRelPath(path);
         retVal = access(fullPath, mask);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -183,7 +88,6 @@ namespace encryptedfs
             retVal = mknod(fullPath, mode, dev);
         }
         return retVal;
-
     }
 
     int efs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi)
@@ -228,7 +132,7 @@ namespace encryptedfs
         
         int fd = open(fullPath, fi->flags, 0);
 
-        if(-1 == fd)
+        if(Err == fd)
         {
             return -errno;
         }
@@ -239,17 +143,12 @@ namespace encryptedfs
 
     int efs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
     {
-         int retVal = 0;
+        int retVal = 0;
         std::string filePath = getRelPath(path);
         auto file = std::make_unique<BasicFile>(filePath, keyFile, ivFile);
         retVal = file->read(buf, size, offset);
-        // std::vector<byte> rtext;
 
-        // readBlocks(path, rtext, size, offset);
-        
-        // memcpy(buf, (char*)rtext.data(), rtext.size());
-        retVal = strlen(buf);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -262,8 +161,6 @@ namespace encryptedfs
         std::string filePath = getRelPath(path);
         auto file = std::make_unique<BasicFile>(filePath, keyFile, ivFile);
         file->write(buf, size);
-        // std::vector<byte> ptext(buf, buf + size);
-        // writeBlocks(path, ptext);
 
         return size;
     }
@@ -271,12 +168,11 @@ namespace encryptedfs
     int efs_release(const char *path, struct fuse_file_info *fi)
     {
         int retVal = close(fi->fh);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
         return 0;
-
     }
 
     int efs_unlink(const char *path)
@@ -284,7 +180,7 @@ namespace encryptedfs
         int retVal = 0;
         const char *fullPath = getRelPath(path);
         retVal = unlink(fullPath);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -296,7 +192,7 @@ namespace encryptedfs
     {
         const char *fullPath = getRelPath(path);
         int retVal = truncate(fullPath, newsize);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno; 
         }
@@ -307,7 +203,7 @@ namespace encryptedfs
     {
         const char *fullPath = getRelPath(path);
         int retVal = utime(fullPath, ubuf);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -320,11 +216,11 @@ namespace encryptedfs
         const char *fullPath = getRelPath(path); 
 
         retVal = utimensat(AT_FDCWD, fullPath, ts, AT_SYMLINK_NOFOLLOW);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         } 
-        return 0; 
+        return 0;
     }
 
     int efs_mkdir(const char *path, mode_t mode)
@@ -333,7 +229,7 @@ namespace encryptedfs
         const char *fullPath = getRelPath(path);
         retVal = mkdir(fullPath, mode);
 
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -345,7 +241,7 @@ namespace encryptedfs
         int retVal = 0;
         const char *fullPath = getRelPath(path);
         retVal = rmdir(fullPath);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
@@ -358,7 +254,7 @@ namespace encryptedfs
         const char *fullPath = getRelPath(path);
         const char *newFullPath = getRelPath(npath);
         retVal = rename(fullPath, newFullPath);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno; 
         }
@@ -368,11 +264,10 @@ namespace encryptedfs
     int efs_fsync(const char *path, int datasync, struct fuse_file_info *fi)
     {
         int retVal = fsync(fi->fh);
-        if(-1 == retVal)
+        if(Err == retVal)
         {
             return -errno;
         }
         return retVal;
     }
-
 }

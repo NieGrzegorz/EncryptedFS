@@ -1,3 +1,9 @@
+/**
+ * Logger class 
+ *
+ */
+
+#pragma once
 
 #include <string> 
 #include <fstream>
@@ -5,7 +11,7 @@ class Logger
 {
 
     public:
-        ~Logger(); 
+        ~Logger();
 
         static Logger& getInstance(); 
 

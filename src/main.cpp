@@ -33,6 +33,7 @@ int main(int argc, char **argv)
     auto fsInfo = std::make_shared<FsInfo>();
     fsInfo->init(argc, argv);
 
+    //Do not pass keyFile and ivFile to fuse_main()
     argv[argc - 1] = NULL;
     argv[argc - 2] = NULL;
 

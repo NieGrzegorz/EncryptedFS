@@ -56,7 +56,6 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
 
             std::vector<byte> temp(begin, end);
             m_cipher->encrypt(temp, ctext);
-            //AesCipher::getInstance().encrypt(temp, ctext);
             writeSingleBlock(ctext);
         }
     }
@@ -77,7 +76,6 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
         std::vector<byte> temp(begin, end);
         
         m_cipher->encrypt(temp, ctext);
-        //AesCipher::getInstance().encrypt(temp, ctext);
         writeSingleBlock(ctext);
     }
 }
@@ -88,7 +86,6 @@ void BasicFile::readBlocks(std::vector<byte> &rtext, size_t size, int offset)
     {
         std::vector<byte> temp;
         m_cipher->decrypt(readSingleBlock(m_chunkSize, offset + i), temp);
-        //AesCipher::getInstance().decrypt(readSingleBlock(m_chunkSize, offset + i), temp);
         rtext.insert(rtext.end(), temp.begin(), temp.end());
     }
 

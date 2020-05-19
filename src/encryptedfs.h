@@ -12,24 +12,16 @@ extern "C"
 }
 namespace encryptedfs {
 
-    // Fills stat stucture
-    //Essential
-    //Check out stat() function and stat struct
     int efs_getattr(const char *path, struct stat *stbuf);
 
-    // To list directory, check fuse filler(!)
     int efs_readdir(const char *path, void *buf, fuse_fill_dir_t filler, off_t offset, struct fuse_file_info *fi);
 
-    //Open redirected? Should it be defined?
     int efs_open(const char *path, struct fuse_file_info *fi);
 
-    //Read file's data and decrypt it
     int efs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 
-    //Write data and encrypt it
     int efs_write(const char *path, const char *buf, size_t size, off_t offset, struct fuse_file_info *fi);
 
-    //Release opened file
     int efs_release(const char *path, struct fuse_file_info *fi);
 
     int efs_mknod(const char *path, mode_t mode, dev_t dev);

@@ -2,16 +2,9 @@
 #include <openssl/err.h>
 #include "AesCipher.h"
 #include <fstream>
+#include <memory>
 
-using EVP_CIPHER_CTX_free_ptr = std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)>;
-
-AesCipher::AesCipher()
-{
-    EVP_add_cipher(EVP_aes_256_cbc());
-
-    m_key = getCipherData(AesCipher::m_keyFile);
-    m_iv = getCipherData(AesCipher::m_ivFile);
-}
+using EvpCtx = std::unique_ptr<EVP_CIPHER_CTX, decltype(&::EVP_CIPHER_CTX_free)>;
 
 AesCipher::AesCipher(std::string &keyFile, std::string &ivFile)
 {
@@ -26,7 +19,7 @@ AesCipher::~AesCipher()
 
 void AesCipher::encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext)
 {
-    EVP_CIPHER_CTX_free_ptr ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
+    EvpCtx ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
 
     int rc = EVP_EncryptInit_ex(ctx.get(), EVP_aes_256_cbc(), NULL, m_key.data(), m_iv.data());
     if (rc != 1)
@@ -58,7 +51,7 @@ void AesCipher::encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext
 
 void AesCipher::decrypt(const std::vector<byte> &ctext, std::vector<byte> &rtext)
 {
-    EVP_CIPHER_CTX_free_ptr ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
+    EvpCtx ctx(EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free);
 
     int rc = EVP_DecryptInit_ex(ctx.get(), EVP_aes_256_cbc(), NULL, m_key.data(), m_iv.data());
     if (rc != 1)
@@ -95,12 +88,6 @@ void AesCipher::setCipherData(std::string &keyFile, std::string &ivFile)
 
     m_key = getCipherData(m_keyFile);
     m_iv = getCipherData(m_ivFile);
-}
-
-AesCipher& AesCipher::getInstance()
-{
-    static AesCipher instance;
-    return instance;
 }
 
 std::vector<byte> AesCipher::getCipherData(std::string filename)

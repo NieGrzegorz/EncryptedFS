@@ -21,13 +21,9 @@ class BasicFile
         std::vector<byte> readSingleBlock(int size, int offset);
 
     private:
-        const int m_chunkSize = 16;
+        static constexpr int m_chunkSize = 16;
 
         std::string m_fPath;
         std::fstream m_ioStream;
-        std::ifstream m_istream;
-        std::ofstream m_ostream; 
-
-        std::string key, iv;
         std::unique_ptr<AesCipher> m_cipher;
 };

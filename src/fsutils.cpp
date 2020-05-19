@@ -9,9 +9,11 @@ extern "C"
     #include <fcntl.h>
 }
 
+constexpr int minArgc = 4;
+
 void FsInfo::init(int argc, char **argv)
 {
-    if(1)//4 == argc)
+    if(minArgc > argc)
     {
         mountPoint= strdup(realpath(argv[argc - 3], NULL));
         keyFile= strdup(realpath(argv[argc - 2], NULL));
@@ -28,18 +30,15 @@ void FsInfo::init(int argc, char **argv)
         printUsage(); 
         throw std::runtime_error("Not enough arguments");
     }
-
 }
 
 const char* getAbsPath(const char *path, const std::string &mountPoint)
 {
-
     std::string tmp(path);
     std::string absPath(mountPoint);
     absPath.append(tmp);
     return strdup(absPath.c_str());
 }
-
 
 const char* getRelPath(const char *path)
 {
@@ -51,7 +50,7 @@ const char* getRelPath(const char *path)
 void printUsage()
 {
     std::cout<<"Usage: \n";
-    std::cout<<"./encfs [mounpoint] [AES key file] [AES IV file]\n";
+    std::cout<<"./encfs [fuseFlags (optional)] [mounpoint] [AES key file] [AES IV file]\n";
 }
 
 

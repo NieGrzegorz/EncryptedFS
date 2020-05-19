@@ -7,15 +7,11 @@
 #include <string>
 #include <vector>
 
-extern "C"
-{
-    #include <fuse.h>
-}
-
 //Struct containts filesystem information
 //moutPoint - mounting point
-//fsArgs - argument count
-//fsArgv - vector containtnig arguments
+//keyFile - file containing encryption key 
+//ivFile - file containing initialization vector 
+//mountPointFd - file descriptor of mountPoint
 struct FsInfo
 {
     std::string mountPoint;
@@ -25,11 +21,11 @@ struct FsInfo
     void init(int argc, char **argv);
 };
 
-//Transfers relative path (from mountpoint)
+//Transfers path (from mountpoint)
 //to absolute path
 const char* getAbsPath(const char *path, const std::string &mountPoint);
 
-//Transfers absolute path
+//Transfers path
 //to relative path
 const char* getRelPath(const char *path);
 
