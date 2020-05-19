@@ -15,19 +15,13 @@ AesCipher::AesCipher()
 
 AesCipher::AesCipher(std::string &keyFile, std::string &ivFile)
 {
-    static std::string kfile = keyFile;
-    static std::string ivfile = ivFile;
     EVP_add_cipher(EVP_aes_256_cbc());
-    m_key = getCipherData(kfile);
-    m_iv = getCipherData(ivfile);
+    m_key = getCipherData(keyFile);
+    m_iv = getCipherData(ivFile);
 }
 
 AesCipher::~AesCipher()
 {
-    FIPS_mode_set(0);
-    EVP_cleanup();
-    CRYPTO_cleanup_all_ex_data();
-    ERR_free_strings();
 }
 
 void AesCipher::encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext)
@@ -42,7 +36,7 @@ void AesCipher::encrypt(const std::vector<byte> &ptext, std::vector<byte> &ctext
 
     EVP_CIPHER_CTX_set_padding(ctx.get(), 0);
 
-    ctext.resize(ptext.size() + m_BlockSize);
+    ctext.resize(ptext.size() + m_blockSize);
     int out_len1 = (int)ctext.size();
 
     rc = EVP_EncryptUpdate(ctx.get(), ctext.data(), &out_len1, ptext.data(), (int)ptext.size());

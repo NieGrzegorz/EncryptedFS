@@ -66,7 +66,7 @@ namespace encryptedfs
         for(int i = 0; i < size; i += CHUNK_SIZE)
         {
             std::vector<byte> temp; 
-            //AesCipher::getInstance().decrypt(readWithFstream(path, CHUNK_SIZE, offset+i), temp);
+            AesCipher::getInstance().decrypt(readWithFstream(path, CHUNK_SIZE, offset+i), temp);
             rtext.insert(rtext.end(), temp.begin(), temp.end()); 
         }
     }
@@ -101,7 +101,7 @@ namespace encryptedfs
                 std::vector<byte>::iterator end = begin + CHUNK_SIZE;
 
                 std::vector<byte> temp(begin, end);
-              //  AesCipher::getInstance().encrypt(temp, ctext);
+                AesCipher::getInstance().encrypt(temp, ctext);
                 writeWithFstream(path, ctext);
             }
         } 
@@ -120,7 +120,7 @@ namespace encryptedfs
                 
 
                 std::vector<byte> temp(begin, end);
-               // AesCipher::getInstance().encrypt(temp, ctext);
+                AesCipher::getInstance().encrypt(temp, ctext);
                 writeWithFstream(path, ctext);
         }
     }
@@ -239,7 +239,7 @@ namespace encryptedfs
 
     int efs_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
     {
-        int retVal = 0;
+         int retVal = 0;
         std::string filePath = getRelPath(path);
         auto file = std::make_unique<BasicFile>(filePath, keyFile, ivFile);
         retVal = file->read(buf, size, offset);
@@ -248,7 +248,7 @@ namespace encryptedfs
         // readBlocks(path, rtext, size, offset);
         
         // memcpy(buf, (char*)rtext.data(), rtext.size());
-        // retVal = strlen(buf);
+        retVal = strlen(buf);
         if(-1 == retVal)
         {
             return -errno;

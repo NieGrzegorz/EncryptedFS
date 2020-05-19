@@ -29,5 +29,5 @@ class BasicFile
         std::ofstream m_ostream; 
 
         std::string key, iv;
-        static std::unique_ptr<AesCipher> m_cipher;
+        std::unique_ptr<AesCipher> m_cipher;
 };

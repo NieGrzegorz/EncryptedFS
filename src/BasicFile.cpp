@@ -10,6 +10,7 @@ extern "C"
 BasicFile::BasicFile(std::string &filePath, std::string &keyFile, std::string &ivFile):
 m_fPath(filePath)
 {
+    m_cipher = std::make_unique<AesCipher>(keyFile, ivFile);
     m_ioStream.open(m_fPath, std::fstream::binary|std::fstream::out|std::fstream::in|std::fstream::app);
     if(!m_ioStream.is_open())
     {
@@ -54,7 +55,8 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
             std::vector<byte>::iterator end = begin + m_chunkSize;
 
             std::vector<byte> temp(begin, end);
-            AesCipher::getInstance().encrypt(temp, ctext);
+            m_cipher->encrypt(temp, ctext);
+            //AesCipher::getInstance().encrypt(temp, ctext);
             writeSingleBlock(ctext);
         }
     }
@@ -73,7 +75,9 @@ void BasicFile::writeBlocks(std::vector<byte> &v)
         std::vector<byte>::iterator begin = v.end() - m_chunkSize;
             
         std::vector<byte> temp(begin, end);
-        AesCipher::getInstance().encrypt(temp, ctext);
+        
+        m_cipher->encrypt(temp, ctext);
+        //AesCipher::getInstance().encrypt(temp, ctext);
         writeSingleBlock(ctext);
     }
 }
@@ -83,7 +87,8 @@ void BasicFile::readBlocks(std::vector<byte> &rtext, size_t size, int offset)
     for(int i = 0; i < size; i += m_chunkSize)
     {
         std::vector<byte> temp;
-        AesCipher::getInstance().decrypt(readSingleBlock(m_chunkSize, offset + i), temp);
+        m_cipher->decrypt(readSingleBlock(m_chunkSize, offset + i), temp);
+        //AesCipher::getInstance().decrypt(readSingleBlock(m_chunkSize, offset + i), temp);
         rtext.insert(rtext.end(), temp.begin(), temp.end());
     }
 
