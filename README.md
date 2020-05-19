@@ -20,6 +20,15 @@ Run following commands
 * make
 
 ## Running filesystem
+Filesystem requires two files: 
+* file with aes key 
+* file with aes iv 
+
+Generate aes key and iv: 
+* openssl enc -nosalt -aes-256-cbc -k hello-aes -P
+
+Save the output in two seperate files. 
+
 Run encryptedFilesystem.sh from project's main directory
 * encryptedFilesystem.sh [mountPoint] [Aes key file] [Aes iv file]
 
