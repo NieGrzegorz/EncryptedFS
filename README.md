@@ -9,6 +9,8 @@ The filesystem is encrypted with AES cipher using OpenSsl library
 - Cmake 
 
 ## Get repository 
+* git clone https://github.com/NieGrzegorz/EncryptedFS.git
+
 ## Building
 ### Create build directory and build with Cmake
 Run following commands
@@ -20,3 +22,7 @@ Run following commands
 ## Running filesystem
 Run encryptedFilesystem.sh from project's main directory
 * encryptedFilesystem.sh [mountPoint] [Aes key file] [Aes iv file]
+
+## Unmount filesystem 
+Use fusermount utility: 
+* fusermount -u [mountPoint]
