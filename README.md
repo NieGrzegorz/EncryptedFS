@@ -1,6 +1,9 @@
 # EncryptedFS
+### The project implemented for the purpose of BSc. thesis. 
+### Topic: Implementation of an encrypted file system using FUSE technology
 Encrypted filesystem implemented on user space using FUSE
 The filesystem is encrypted with AES cipher using OpenSsl library
+
 
 ## Prerequisites
 - C++ compiler which supports C++14 features
